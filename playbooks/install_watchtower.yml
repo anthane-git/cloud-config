@@ -1,0 +1,13 @@
+---
+- name: Install watchtower
+  hosts: cloud-central
+  tasks:
+    - name: Deploy Watchtower
+      community.docker.docker_container:
+        name: watchtower
+        command: --schedule "0 0 4 * * *"
+        image: containrrr/watchtower
+
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+        restart_policy: always

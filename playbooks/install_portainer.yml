@@ -1,0 +1,15 @@
+---
+- name: Install portainer
+  hosts: cloud-central
+  tasks:
+    - name: Deploy Portainer
+      community.docker.docker_container:
+        name: portainer
+        image: portainer/portainer-ce
+        ports:
+          - 9090:9000
+          - 8080:8000
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - portainer_data:/data
+        restart_policy: always
