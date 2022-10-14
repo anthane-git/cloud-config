@@ -1,0 +1,40 @@
+---
+- name: Install mysql with remote access
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - mysql-server
+    - mysql-client
+    - python3-mysqldb
+    - libmysqlclient-dev
+  become: true
+
+- name: Start Mysql Service
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: true
+
+- name: Create Application DB User
+  community.mysql.mysql_user:
+    name: "{{ mysql_db_user }}"
+    password: "{{ mysql_user_pass }}"
+    priv: "*.*:ALL"
+    host: "%"
+    state: present
+
+- name: Create Application Database
+  community.mysql.mysql_db:
+    name: "{{ mysql_db }}"
+    state: present
+
+- name: Enable remote login to mysql
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: "^bind-address"
+    line: "bind-address = 0.0.0.0"
+    backup: true
+  notify:
+    - Restart mysql

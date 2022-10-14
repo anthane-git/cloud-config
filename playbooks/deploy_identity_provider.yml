@@ -1,6 +1,15 @@
 ---
 - name: Deploy Identity Provider
   hosts: cloud-central
+  become: true
+  roles:
+    - roles/mysql
+  vars:
+    mysql_port: 3306
+    mysql_db: idp
+    mysql_db_user: idpadmin
+    mysql_user_pass: idpadmin
+
   tasks:
     - name: Deploy Identity Provider
       community.docker.docker_compose:
