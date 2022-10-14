@@ -4,8 +4,10 @@
   become: true
   roles:
     - roles/mysql
+    - roles/postgresql
+    - roles/apt
+    - roles/nginx
   vars:
-    mysql_port: 3306
     mysql_db: idp
     mysql_db_user: idpadmin
     mysql_user_pass: idpadmin

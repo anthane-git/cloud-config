@@ -1,0 +1,4 @@
+---
+- name: "Ansible | List all known variables and facts"
+  ansible.builtin.debug:
+    var: hostvars[inventory_hostname]

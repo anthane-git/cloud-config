@@ -1,0 +1,5 @@
+---
+- name: Deploy Identity Provider
+  hosts: localhost
+  roles:
+    - roles/debug
