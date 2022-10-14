@@ -1,36 +1,66 @@
 ---
-- name: Ensure postgreql packages are installed
+- name: Update apt repo and cache on all Ubuntu boxes
   ansible.builtin.apt:
-    name: "{{ item }}"
+    update_cache: yes
+    force_apt_get: yes
+    cache_valid_time: 3600
+
+- name: Upgrade all packages on servers
+  ansible.builtin.apt:
+    upgrade: dist
+    force_apt_get: yes
+
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - wget
+      - python3-psycopg2
+      - acl
     state: present
-  with_items:
-    - postgresql-server
-    - python-psycopg2
+
+- name: Setup Postgres 14 repo
+  ansible.builtin.shell: |
+    echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+  mode: 0644
+  args:
+    warn: false
+
+- name: Install postgresql
+  ansible.builtin.apt:
+    name: postgresql-14
+    update_cache: yes
   notify:
-    - restart postgresql
-  register: postgresql_yum
+    - Enable Postgresql
 
-- name: Ensure postgresql_data_dir exists
-  ansible.builtin.file:
-    path: "{{ postgresql_data_dir }}"
-    state: directory
-    owner: "{{ postgresql_user }}"
-    group: "{{ postgresql_user }}"
-    mode: 0700
-  tags: install
+- name: Ensure PostgreSQL is listening on *
+  ansible.builtin.lineinfile:
+    dest: /etc/postgresql/14/main/postgresql.conf
+    regexp: '^listen_addresses\s*='
+    line: "listen_addresses='*'"
+    state: present
+  notify: Restart Postgresql
 
-- name: Ensure postgresql_data_dir is configured
-  lineinfile:
-    dest: /etc/sysconfig/pgsql/postgresql
-    create: true
-    line: PGDATA={{ postgresql_data_dir }}
-  notify:
-    - Restart postgresql
+- name: Add new configuration to "pg_hba.conf"
+  ansible.builtin.blockinfile:
+    dest: /etc/postgresql/14/main/pg_hba.conf
+    block: |
+      host    all             all             0.0.0.0/0                md5
+      host    all             all             ::/0                     md5
+  notify: Restart Postgresql
 
-- name: Init postgresql
-  become_user: "{{ postgresql_user }}"
-  shell: /usr/bin/initdb -E UTF8 {{ postgresql_data_dir }}
-  when: postgresql_yum.results[0].changed
+- name: Change peer identification to trust
+  ansible.builtin.shell: /bin/sed -i '/^local/s/peer/trust/' /etc/postgresql/14/main/pg_hba.conf
+  args:
+    warn: no
+  notify: Restart Postgresql
 
-- name: Ensure PostgreSQL service is running and set to start on boot
-  service: name=postgresql state=started enabled=yes
+- name: Create a Superuser PostgreSQL database user
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: "{{ postgres_root_user }}"
+    password: "{{ postgres_root_pass }}"
+    role_attr_flags: CREATEDB,SUPERUSER,CREATEROLE
+    encrypted: yes
+  state: present

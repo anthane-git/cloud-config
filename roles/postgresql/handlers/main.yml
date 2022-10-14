@@ -1,0 +1,19 @@
+- name: Restart Postgresql
+  ansible.builtin.systemd:
+    name: postgresql
+    state: restarted
+
+- name: Start Postgresql
+  ansible.builtin.systemd:
+    name: postgresql
+    state: started
+
+- name: Stop Postgresql
+  ansible.builtin.systemd:
+    name: postgresql
+    state: stopped
+
+- name: Enable Postgresql
+  ansible.builtin.systemd:
+    name: postgresql
+    enabled: true
