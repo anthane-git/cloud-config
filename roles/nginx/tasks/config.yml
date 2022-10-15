@@ -2,17 +2,19 @@
 - name: Configure site nginx virtual host
   ansible.builtin.template:
     src: nginx.conf.j2
-    dest: /etc/nginx/sites-available/{{ site }}.conf
+    dest: /etc/nginx/sites-available/{{ item.name }}.conf
     # owner: "{{ site }}"
     # group: "{{ site }}"
     mode: 0644
+  loop: "{{ hostnames }}"
   notify:
     - Restart Nginx
 
 - name: Enable site configuration
   ansible.builtin.file:
-    src: /etc/nginx/sites-available/{{ site }}.conf
-    dest: /etc/nginx/sites-enabled/{{ site }}.conf
+    src: /etc/nginx/sites-available/{{ item.name }}.conf
+    dest: /etc/nginx/sites-enabled/{{ item.name }}.conf
     state: link
+  loop: "{{ hostnames }}"
   notify:
     - Reload Nginx

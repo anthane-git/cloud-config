@@ -6,12 +6,15 @@
     - roles/nginx
     - roles/cloudflare
   vars:
-    docker_volume: db_data
-    server_name: identity-provider.blazeclone.xyz
-    docker_port: 5000
-    site: idp
+    hostnames:
+      - name: identity-provider.blazeclone.xyz
+        port: 5000
+      - name: identity-provider-api.blazeclone.xyz
+        port: 5500
     dns_records:
       - name: identity-provider
+        value: 170.187.230.210
+      - name: identity-provider-api
         value: 170.187.230.210
   vars_files:
     - ../../vars/cloudflare/main.yml
