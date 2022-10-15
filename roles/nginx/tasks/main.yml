@@ -1,31 +1,9 @@
-- name: Update apt cache and install Nginx
-  ansible.builtin.apt:
-    name: nginx
-    state: present
-    update_cache: true
+---
+- name: Install nginx
+  ansible.builtin.include_tasks: install.yml
 
-- name: Copy website files to the server's document root
-  ansible.builtin.copy:
-    src: "{{ app_root }}"
-    dest: "{{ document_root }}"
-    mode: preserve
+- name: Nginx configure new site
+  ansible.builtin.include_tasks: config.yml
 
-- name: Apply Nginx template
-  ansible.builtin.template:
-    src: files/nginx.conf.j2
-    dest: /etc/nginx/sites-available/default
-    mode: 0644
-  notify: Restart Nginx
-
-- name: Enable new site
-  ansible.builtin.file:
-    src: /etc/nginx/sites-available/default
-    dest: /etc/nginx/sites-enabled/default
-    state: link
-  notify: Restart Nginx
-
-- name: Allow all access to tcp port 80
-  ansible.builtin.ufw:
-    rule: allow
-    port: "80"
-    proto: tcp
+- name: Allow ports though firewall
+  ansible.builtin.include_tasks: ufw.yml

@@ -1,0 +1,16 @@
+---
+- name: UFW allow http on port 80
+  ansible.builtin.ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+  notify:
+    - Restart Nginx
+
+- name: UFW allow http on port 443
+  ansible.builtin.ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+  notify:
+    - Restart Nginx

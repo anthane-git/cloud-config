@@ -1,6 +1,6 @@
 ---
 - name: Install portainer
-  hosts: cloud-central
+  hosts: central
   tasks:
     - name: Deploy Portainer
       community.docker.docker_container:

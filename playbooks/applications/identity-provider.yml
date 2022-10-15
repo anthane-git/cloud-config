@@ -1,0 +1,55 @@
+---
+- name: Deploy Identity Provider
+  hosts: central
+  become: true
+  roles:
+    - roles/nginx
+    - roles/cloudflare
+  vars:
+    docker_volume: db_data
+    server_name: identity-provider.blazeclone.xyz
+    docker_port: 5000
+    site: idp
+    dns_records:
+      - name: identity-provider
+        value: 170.187.230.210
+  vars_files:
+    - ../../vars/cloudflare/main.yml
+
+  tasks:
+    - name: Create Volumes
+      community.docker.docker_volume:
+        name: postgres
+
+    - name: Deploy Identity Provider
+      community.docker.docker_compose:
+        project_name: idp-view
+        definition:
+          version: "3.9"
+          services:
+            view:
+              image: ghcr.io/anthane-git/identity-view:main
+              ports:
+                - 5000:5000
+            api:
+              image: ghcr.io/anthane-git/identity-api:main
+              ports:
+                - 5500:3000
+              depends_on:
+                - postgres
+            postgres:
+              image: postgres:13
+              container_name: idp-postgres
+              restart: always
+              ports:
+                - 5432:5432
+              environment:
+                POSTGRES_DB: nest
+                POSTGRES_USER: prisma
+                POSTGRES_PASSWORD: root
+              volumes:
+                - postgres:/var/lib/postgresql/data
+
+          volumes:
+            postgres:
+              name: nest-db

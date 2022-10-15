@@ -1,0 +1,17 @@
+---
+- name: Manage cloudflare dns record
+  community.general.cloudflare_dns:
+    account_email: "{{ item.email | default(cloudflare_dns_account_email) }}"
+    account_api_key: "{{ item.token | default(cloudflare_dns_account_api_token) }}"
+    zone: "{{ item.zone | default(cloudflare_dns_zone) }}"
+    record: "{{ item.name }}"
+    type: "{{ item.type | default('A') }}"
+    ttl: "{{ item.ttl | default(omit) }}"
+    proxied: "{{ item.proxied | default(true) }}"
+    priority: "{{ item.priority | default(omit) }}"
+    solo: "{{ item.solo | default('yes' if item.state is not defined or item.state == 'present' else 'no') }}"
+    value: "{{ item.value }}"
+    state: "{{ item.state | default(omit) }}"
+  register: record
+  run_once: true
+  loop: "{{ dns_records }}"

@@ -1,6 +1,6 @@
 ---
 - name: Install watchtower
-  hosts: cloud-central
+  hosts: central
   tasks:
     - name: Deploy Watchtower
       community.docker.docker_container:

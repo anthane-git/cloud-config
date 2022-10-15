@@ -1,0 +1,9 @@
+---
+- name: Set nginx package variables
+  ansible.builtin.set_fact:
+    packages:
+      - nginx
+
+- name: Install nginx
+  ansible.builtin.include_role:
+    name: roles/apt

@@ -1,0 +1,13 @@
+server {
+    listen 80 ;
+    server_name {{ server_name }};
+
+    if ($http_x_forwarded_proto = "http") {
+      return 301 https://$server_name$request_uri;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:{{ docker_port }};
+        include /etc/nginx/proxy_params;
+    }
+}
