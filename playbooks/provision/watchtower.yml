@@ -2,12 +2,13 @@
 - name: Install watchtower
   hosts: central
   tasks:
-    - name: Deploy Watchtower
+    - name: Deploy watchtower
       community.docker.docker_container:
         name: watchtower
-        command: |
-          --interval 100
         image: containrrr/watchtower
+        command: |
+          --interval 300
+          --cleanup true
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
         restart_policy: always
