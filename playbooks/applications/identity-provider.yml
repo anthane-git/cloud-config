@@ -24,9 +24,9 @@
       community.docker.docker_volume:
         name: postgres
 
-    - name: Deploy Identity Provider
+    - name: Deploy identity provider
       community.docker.docker_compose:
-        project_name: idp-view
+        project_name: identity-provider
         definition:
           version: "3.9"
           services:
