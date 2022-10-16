@@ -1,0 +1,29 @@
+---
+- name: Deploy api gateway
+  hosts: central
+  become: true
+  roles:
+    - roles/nginx
+    - roles/cloudflare
+  vars:
+    hostnames:
+      - name: api.blazeclone.xyz
+        port: 8000
+    dns_records:
+      - name: api
+        value: 170.187.230.210
+
+  vars_files:
+    - ../../vars/cloudflare/main.yml
+
+  tasks:
+    - name: Deploy api gateway containers
+      community.docker.docker_compose:
+        project_name: api-gateway
+        definition:
+          version: "3.9"
+          services:
+            nodejs:
+              image: ghcr.io/anthane-git/api-gateway:main
+              ports:
+                - 8000:80

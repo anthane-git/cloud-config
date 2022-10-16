@@ -1,0 +1,61 @@
+---
+- name: Deploy client list
+  hosts: central
+  become: true
+  roles:
+    - roles/nginx
+    - roles/cloudflare
+  vars:
+    hostnames:
+      - name: client-list.blazeclone.xyz
+        port: 4000
+      - name: client-list-api.blazeclone.xyz
+        port: 4500
+    dns_records:
+      - name: client-list
+        value: 170.187.230.210
+      - name: client-list-api
+        value: 170.187.230.210
+
+  vars_files:
+    - ../../vars/cloudflare/main.yml
+
+  tasks:
+    - name: Create volumes
+      community.docker.docker_volume:
+        name: mysql
+
+    - name: Deploy client list containers
+      community.docker.docker_compose:
+        project_name: api-gateway
+        definition:
+          version: "3.9"
+          services:
+            view:
+              image: ghcr.io/anthane-git/client-list-view:main
+              ports:
+                - 4000:5000
+            laravel:
+              image: ghcr.io/anthane-git/client-list-api:main
+              ports:
+                - 4500:80
+            mysql:
+              image: mysql/mysql-server:8.0
+              container_name: cl-mysql
+              ports:
+                - 4306:3306
+              environment:
+                MYSQL_ROOT_PASSWORD: password
+                MYSQL_DATABASE: client_list
+                MYSQL_USER: root
+                MYSQL_PASSWORD: password
+              volumes:
+                - mysql:/var/lib/mysql
+              healthcheck:
+                test: ["CMD", "mysqladmin", "ping", "-p password"]
+                retries: 3
+                timeout: 5s
+
+          volumes:
+            mysql:
+              name: sail-mysql

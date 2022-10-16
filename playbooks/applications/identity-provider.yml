@@ -20,11 +20,11 @@
     - ../../vars/cloudflare/main.yml
 
   tasks:
-    - name: Create Volumes
+    - name: Create volumes
       community.docker.docker_volume:
         name: postgres
 
-    - name: Deploy identity provider
+    - name: Deploy identity provider containers
       community.docker.docker_compose:
         project_name: identity-provider
         definition:
