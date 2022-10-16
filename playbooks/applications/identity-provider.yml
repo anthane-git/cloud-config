@@ -1,5 +1,5 @@
 ---
-- name: Deploy Identity Provider
+- name: Deploy identity provider
   hosts: central
   become: true
   roles:
