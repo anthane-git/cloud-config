@@ -34,12 +34,17 @@
               image: ghcr.io/anthane-git/identity-view:main
               ports:
                 - 5000:5000
+              environment:
+                APP_API_ENTRYPOINT: https://identity-provider-api/v1
             api:
               image: ghcr.io/anthane-git/identity-api:main
               ports:
                 - 5500:3000
               depends_on:
                 - postgres
+              environment:
+                DATABASE_DOCKER_URL: postgresql://prisma:root@idp-postgres:5432/nest
+                DATABASE_URL: postgresql://prisma:root@idp-postgres:5432/nest
             postgres:
               image: postgres:13
               container_name: idp-postgres
