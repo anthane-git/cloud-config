@@ -10,3 +10,9 @@ Prerequisites:
 ```bash
 ansible-galaxy collection install community.general
 ```
+
+## Quick Deploy
+
+```bash
+bash scripts/quick-deploy.sh
+```
