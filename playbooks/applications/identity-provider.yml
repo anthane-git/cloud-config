@@ -13,9 +13,9 @@
         port: 5500
     dns_records:
       - name: identity-provider
-        value: 170.187.228.189
+        value: "{{ ansible_ssh_host }}"
       - name: identity-provider-api
-        value: 170.187.228.189
+        value: "{{ ansible_ssh_host }}"
   vars_files:
     - ../../vars/cloudflare/main.yml
 
@@ -30,14 +30,16 @@
         definition:
           version: "3.9"
           services:
-            view:
+            react:
               image: ghcr.io/anthane-git/identity-view:main
+              container_name: idp-react
               ports:
                 - 5000:5000
               environment:
                 APP_API_ENTRYPOINT: https://identity-provider-api/v1
-            api:
+            nestjs:
               image: ghcr.io/anthane-git/identity-api:main
+              container_name: idp-nestjs
               ports:
                 - 5500:3000
               depends_on:

@@ -11,7 +11,7 @@
         port: 8000
     dns_records:
       - name: api
-        value: 170.187.228.189
+        value: "{{ ansible_ssh_host }}"
 
   vars_files:
     - ../../vars/cloudflare/main.yml
@@ -25,5 +25,6 @@
           services:
             nodejs:
               image: ghcr.io/anthane-git/api-gateway:main
+              container_name: ag-nodejs
               ports:
                 - 8000:80

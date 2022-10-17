@@ -1,6 +1,20 @@
 ---
 - name: Install portainer
   hosts: central
+  roles:
+    - roles/nginx
+    - roles/cloudflare
+  vars:
+    hostnames:
+      - name: dashboard.blazeclone.xyz
+        port: 9090
+    dns_records:
+      - name: dashboard
+        value: 170.187.228.189
+
+  vars_files:
+    - ../../vars/cloudflare/main.yml
+
   tasks:
     - name: Deploy Portainer
       community.docker.docker_container:
@@ -12,4 +26,6 @@
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - portainer_data:/data
+        env:
+          VIRTUAL_HOST: dashboard.blazeclone.xyz
         restart_policy: always

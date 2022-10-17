@@ -13,9 +13,9 @@
         port: 4500
     dns_records:
       - name: client-list
-        value: 170.187.228.189
+        value: "{{ ansible_ssh_host }}"
       - name: client-list-api
-        value: 170.187.228.189
+        value: "{{ ansible_ssh_host }}"
 
   vars_files:
     - ../../vars/cloudflare/main.yml
@@ -31,12 +31,14 @@
         definition:
           version: "3.9"
           services:
-            view:
+            react:
               image: ghcr.io/anthane-git/client-list-view:main
+              container_name: cl-react
               ports:
                 - 4000:5000
             laravel:
               image: ghcr.io/anthane-git/client-list-api:main
+              container_name: cl-laravel
               ports:
                 - 4500:80
             mysql:
