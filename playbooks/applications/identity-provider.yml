@@ -13,9 +13,9 @@
         port: 5500
     dns_records:
       - name: identity-provider
-        value: "{{ ansible_ssh_host }}"
+        value: "{{ ansible_default_ipv4.address }}"
       - name: identity-provider-api
-        value: "{{ ansible_ssh_host }}"
+        value: "{{ ansible_default_ipv4.address }}"
   vars_files:
     - ../../vars/cloudflare/main.yml
 

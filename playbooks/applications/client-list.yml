@@ -13,9 +13,9 @@
         port: 4500
     dns_records:
       - name: client-list
-        value: "{{ ansible_ssh_host }}"
+        value: "{{ ansible_default_ipv4.address }}"
       - name: client-list-api
-        value: "{{ ansible_ssh_host }}"
+        value: "{{ ansible_default_ipv4.address }}"
 
   vars_files:
     - ../../vars/cloudflare/main.yml
