@@ -13,9 +13,9 @@
         port: 4500
     dns_records:
       - name: client-list
-        value: 170.187.230.210
+        value: 170.187.228.189
       - name: client-list-api
-        value: 170.187.230.210
+        value: 170.187.228.189
 
   vars_files:
     - ../../vars/cloudflare/main.yml

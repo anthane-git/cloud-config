@@ -13,9 +13,9 @@
         port: 5500
     dns_records:
       - name: identity-provider
-        value: 170.187.230.210
+        value: 170.187.228.189
       - name: identity-provider-api
-        value: 170.187.230.210
+        value: 170.187.228.189
   vars_files:
     - ../../vars/cloudflare/main.yml
 
