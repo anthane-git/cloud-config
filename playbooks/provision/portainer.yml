@@ -10,7 +10,7 @@
         port: 9090
     dns_records:
       - name: dashboard
-        value: 170.187.228.189
+        value: "{{ ansible_default_ipv4.address }}"
 
   vars_files:
     - ../../vars/cloudflare/main.yml
