@@ -27,7 +27,7 @@
 
     - name: Deploy client list containers
       community.docker.docker_compose:
-        project_name: api-gateway
+        project_name: client-list
         definition:
           version: "3.9"
           services:
@@ -43,7 +43,7 @@
               image: mysql/mysql-server:8.0
               container_name: cl-mysql
               ports:
-                - 4306:3306
+                - 3306:3306
               environment:
                 MYSQL_ROOT_PASSWORD: password
                 MYSQL_DATABASE: client_list
@@ -51,10 +51,6 @@
                 MYSQL_PASSWORD: password
               volumes:
                 - mysql:/var/lib/mysql
-              healthcheck:
-                test: ["CMD", "mysqladmin", "ping", "-p password"]
-                retries: 3
-                timeout: 5s
 
           volumes:
             mysql:
