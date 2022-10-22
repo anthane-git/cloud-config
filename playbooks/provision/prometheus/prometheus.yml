@@ -1,0 +1,26 @@
+---
+- name: Install prometheus
+  hosts: central
+  tasks:
+    - name: Create volumes
+      community.docker.docker_volume:
+        name: prometheus-data
+
+    - name: Deploy prometheus
+      community.docker.docker_container:
+        name: prometheus
+        image: prom/prometheus:latest
+        ports:
+          - 9091:9090
+        volumes:
+          - /etc/prometheus:/etc/prometheus
+          - prometheus-data:/prometheus
+        restart_policy: unless-stopped
+        command:
+          - "--config.file=/etc/prometheus/prometheus.yml"
+
+    - name: Copy configuration
+      ansible.builtin.copy:
+        src: ./prometheus.config.yml
+        dest: /etc/prometheus/prometheus.yml
+        mode: 0644

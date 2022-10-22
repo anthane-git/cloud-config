@@ -1,0 +1,17 @@
+---
+- name: Install grafana
+  hosts: central
+  tasks:
+    - name: Create volumes
+      community.docker.docker_volume:
+        name: grafana-data
+
+    - name: Deploy grafana
+      community.docker.docker_container:
+        name: grafana
+        image: grafana/grafana-oss:latest
+        ports:
+          - 8200:3000
+        volumes:
+          - grafana-data:/var/lib/grafana
+        restart_policy: unless-stopped
