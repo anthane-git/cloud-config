@@ -1,0 +1,20 @@
+---
+- name: Install cadvisor
+  hosts: central
+  tasks:
+    - name: Deploy cadvisor exporter
+      community.docker.docker_container:
+        name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.45.0
+        ports:
+          - 8081:8080
+        volumes:
+          - /:/rootfs:ro
+          - /var/run:/var/run:ro
+          - /sys:/sys:ro
+          - /var/lib/docker/:/var/lib/docker:ro
+          - /dev/disk/:/dev/disk:ro
+        pid_mode: host
+        restart_policy: unless-stopped
+        devices:
+          - /dev/kmsg

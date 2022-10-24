@@ -1,0 +1,14 @@
+---
+- name: Install node exporter
+  hosts: central
+  tasks:
+    - name: Deploy node exporter
+      community.docker.docker_container:
+        name: node-exporter
+        image: quay.io/prometheus/node-exporter:latest
+        volumes:
+          - "/:/host:ro,rslave"
+        pid_mode: host
+        restart_policy: unless-stopped
+        command:
+          - "--path.rootfs=/host"

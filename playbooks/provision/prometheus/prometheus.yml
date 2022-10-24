@@ -11,7 +11,7 @@
         name: prometheus
         image: prom/prometheus:latest
         ports:
-          - 9091:9090
+          - 9090:9090
         volumes:
           - /etc/prometheus:/etc/prometheus
           - prometheus-data:/prometheus
